@@ -16,6 +16,7 @@ pub enum AutoTradeError {
     MrStrategyNotFound = 13,
     MrInsufficientHistory = 14,
     MrLowVolatility = 15,
+docs/contract-events-documentation
     TradingPaused = 16,
     StrategyNotFound = 17,
     PositionAlreadyExists = 18,
@@ -62,4 +63,81 @@ pub enum AutoTradeError {
     DailyTransferLimitExceeded = 59,
     DailyVolumeLimitExceeded = 60,
     GlobalCapacityExceeded = 61,
+
+
+feature/dca-strategy
+    DcaStrategyNotFound = 10,
+    DcaStrategyInactive = 11,
+    DcaEndTimeReached = 12,
+ main
+
+    TradingPaused = 10,
+
+    StrategyNotFound = 11,
+    PositionAlreadyExists = 12,
+    RankingDisabled = 13,
+
+    InvalidBasketSize = 14,
+    InsufficientPriceHistory = 15,
+    InvalidPriceData = 16,
+    NonCointegratedBasket = 17,
+    ActivePortfolioExists = 18,
+    NoActivePortfolio = 19,
+    NoTradeSignal = 20,
+    InvalidStatArbConfig = 21,
+    
+    // Pairs Trading
+    PairsStrategyNotFound = 22,
+    PairsActivePositionExists = 23,
+    PairsNoActivePosition = 24,
+    InsufficientCorrelation = 25,
+    PairNotCointegrated = 26,
+    InvalidPairsConfig = 27,
+ 
+ main
+    // Arbitrage
+    ArbitrageOpportunityExpired = 28,
+    ArbitrageUnprofitable = 29,
+    ArbTooLarge = 30,
+    FrontRunningRisk = 31,
+
+    // Insurance
+    InvalidInsuranceConfig = 32,
+    InsuranceNotConfigured = 33,
+
+    // Referral
+    SelfReferral = 34,
+    ReferralAlreadySet = 35,
+    CircularReferral = 36,
+    ReferralLimitExceeded = 37,
+
+ TWAP-Orders
+    // TWAP
+    InvalidTWAPDuration = 38,
+    TWAPOrderNotFound = 39,
+    NotTWAPOwner = 40,
+    TWAPNotActive = 41,
+
+Correlation-Based-Risk
+    // Correlation
+    CorrelationLimitExceeded = 42,
+    TooManyCorrelatedPositions = 43,
+
+    // Conditional Orders
+    ConditionalOrderNotFound = 44,
+    ConditionalOrderNotPending = 45,
+    ConditionalOrderNotTriggered = 46,
+    InvalidConditionalConfig = 47,
+
+    // Oracle circuit breaker
+    OracleUnavailable = 48,
+
+    // Oracle whitelist
+    LastOracleForPair = 49,
+
+ main
+ main
+main
+ main
+ main
 }

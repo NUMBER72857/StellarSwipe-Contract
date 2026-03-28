@@ -211,3 +211,19 @@ pub fn emit_circuit_breaker_triggered(env: &Env, category: String, reason: Strin
     let topics = (Symbol::new(env, "circuit_breaker_triggered"), category);
     env.events().publish(topics, reason);
 }
+ docs/contract-events-documentation
+
+
+pub fn emit_guardian_set(env: &Env, guardian: Address) {
+    let topics = (Symbol::new(env, "guardian_set"),);
+    env.events().publish(topics, guardian);
+}
+
+pub fn emit_guardian_revoked(env: &Env, guardian: Address) {
+    let topics = (Symbol::new(env, "guardian_revoked"),);
+    env.events().publish(topics, guardian);
+}
+
+ main
+ main
+ main
