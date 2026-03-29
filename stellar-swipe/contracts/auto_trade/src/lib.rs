@@ -123,7 +123,6 @@ impl AutoTradeContract {
         order_type: OrderType,
         amount: i128,
     ) -> Result<TradeResult, AutoTradeError> {
-        // Check if trading is paused
         if admin::is_paused(&env, String::from_str(&env, CAT_TRADING)) {
             return Err(AutoTradeError::TradingPaused);
         }
@@ -148,13 +147,10 @@ impl AutoTradeContract {
             return Err(AutoTradeError::InsufficientBalance);
         }
 
-        // Determine if this is a sell operation (simplified)
-        let is_sell = false; // This should be determined from the signal or order details
+        let is_sell = false;
 
-        // Set current asset price for risk calculations
         risk::set_asset_price(&env, signal.base_asset, signal.price);
 
-        // Perform risk checks
         let stop_loss_triggered = risk::validate_trade(
             &env,
             &user,
@@ -164,7 +160,6 @@ impl AutoTradeContract {
             is_sell,
         )?;
 
-        // If stop-loss is triggered, emit event and proceed with sell
         if stop_loss_triggered {
             #[allow(deprecated)]
             env.events().publish(
@@ -190,7 +185,6 @@ impl AutoTradeContract {
             TradeStatus::Filled
         };
 
-        // Update circuit breaker stats
         admin::update_cb_stats(
             &env,
             status == TradeStatus::Failed,
@@ -208,7 +202,6 @@ impl AutoTradeContract {
             status: status.clone(),
         };
 
-        // Update position tracking
         if execution.executed_amount > 0 {
             let positions = risk::get_user_positions(&env, &user);
             let current_amount = positions
@@ -230,7 +223,6 @@ impl AutoTradeContract {
                 execution.executed_price,
             );
 
-            // Record trade in history
             risk::add_trade_record(&env, &user, signal_id, execution.executed_amount);
         }
 
@@ -271,7 +263,6 @@ impl AutoTradeContract {
             trade.clone(),
         );
 
-        // Emit event if trade was blocked by risk limits (status = Failed due to risk)
         if status == TradeStatus::Failed {
             #[allow(deprecated)]
             env.events().publish(
@@ -522,6 +513,7 @@ impl AutoTradeContract {
         Ok(portfolio)
     }
 
+<<<<<<< Updated upstream
     // ── Portfolio Insurance public API ────────────────────────────────────────
 
     /// Configure portfolio insurance for the calling user.
@@ -585,6 +577,9 @@ impl AutoTradeContract {
     }
 
     // ── Exit Strategy (tiered TP + trailing stops) ─────────────────────────
+=======
+    // ── Exit Strategy ────────────────────────────────────────────────────────
+>>>>>>> Stashed changes
 
     /// Create a custom exit strategy with explicit TP and stop-loss tiers.
     #[allow(clippy::too_many_arguments)]
@@ -594,8 +589,13 @@ impl AutoTradeContract {
         signal_id: u64,
         entry_price: i128,
         position_size: i128,
+<<<<<<< Updated upstream
         take_profit_tiers: soroban_sdk::Vec<exit_strategy::TakeProfitTier>,
         stop_loss_tiers: soroban_sdk::Vec<exit_strategy::StopLossTier>,
+=======
+        take_profit_tiers: Vec<exit_strategy::TakeProfitTier>,
+        stop_loss_tiers: Vec<exit_strategy::StopLossTier>,
+>>>>>>> Stashed changes
     ) -> Result<u64, AutoTradeError> {
         user.require_auth();
         exit_strategy::create_exit_strategy(
@@ -610,7 +610,11 @@ impl AutoTradeContract {
     }
 
     /// Create a conservative preset exit strategy (3 TPs + 10% trail).
+<<<<<<< Updated upstream
     pub fn create_conservative_exit(
+=======
+    pub fn create_exit_strategy_conservative(
+>>>>>>> Stashed changes
         env: Env,
         user: Address,
         signal_id: u64,
@@ -621,8 +625,13 @@ impl AutoTradeContract {
         exit_strategy::preset_conservative(&env, user, signal_id, entry_price, position_size)
     }
 
+<<<<<<< Updated upstream
     /// Create a balanced preset exit strategy (2 TPs + tiered trails 10%/7%).
     pub fn create_balanced_exit(
+=======
+    /// Create a balanced preset exit strategy (2 TPs + tiered trail 10%/7%).
+    pub fn create_exit_strategy_balanced(
+>>>>>>> Stashed changes
         env: Env,
         user: Address,
         signal_id: u64,
@@ -633,8 +642,13 @@ impl AutoTradeContract {
         exit_strategy::preset_balanced(&env, user, signal_id, entry_price, position_size)
     }
 
+<<<<<<< Updated upstream
     /// Create an aggressive preset exit strategy (4 TPs + tiered trails 10%/7%/5%).
     pub fn create_aggressive_exit(
+=======
+    /// Create an aggressive preset exit strategy (4 TPs + 5% trail).
+    pub fn create_exit_strategy_aggressive(
+>>>>>>> Stashed changes
         env: Env,
         user: Address,
         signal_id: u64,
@@ -646,11 +660,19 @@ impl AutoTradeContract {
     }
 
     /// Check current price against all tiers and auto-execute any triggered exits.
+<<<<<<< Updated upstream
     pub fn check_exit_strategy(
         env: Env,
         strategy_id: u64,
         current_price: i128,
     ) -> Result<soroban_sdk::Vec<u64>, AutoTradeError> {
+=======
+    pub fn check_and_execute_exits(
+        env: Env,
+        strategy_id: u64,
+        current_price: i128,
+    ) -> Result<Vec<exit_strategy::ExecutedExit>, AutoTradeError> {
+>>>>>>> Stashed changes
         exit_strategy::check_and_execute_exits(&env, strategy_id, current_price)
     }
 
@@ -658,6 +680,7 @@ impl AutoTradeContract {
     pub fn get_exit_strategy(
         env: Env,
         strategy_id: u64,
+<<<<<<< Updated upstream
     ) -> Result<exit_strategy::ExitStrategy, AutoTradeError> {
         exit_strategy::get_exit_strategy(&env, strategy_id)
     }
@@ -671,6 +694,13 @@ impl AutoTradeContract {
     }
 
     /// Manually adjust remaining position size (e.g. after partial manual close).
+=======
+    ) -> Option<exit_strategy::ExitStrategy> {
+        exit_strategy::get_strategy(&env, strategy_id)
+    }
+
+    /// Adjust remaining position size after a manual partial close.
+>>>>>>> Stashed changes
     pub fn adjust_exit_position(
         env: Env,
         user: Address,
@@ -678,6 +708,7 @@ impl AutoTradeContract {
         new_size: i128,
     ) -> Result<(), AutoTradeError> {
         user.require_auth();
+<<<<<<< Updated upstream
         exit_strategy::adjust_position_size(&env, &user, strategy_id, new_size)
     }
 
@@ -732,6 +763,9 @@ impl AutoTradeContract {
         strategy_id: u64,
     ) -> Result<strategies::grid::GridPerformance, AutoTradeError> {
         strategies::grid::calculate_grid_performance(&env, strategy_id)
+=======
+        exit_strategy::adjust_position_size(&env, strategy_id, &user, new_size)
+>>>>>>> Stashed changes
     }
 }
 

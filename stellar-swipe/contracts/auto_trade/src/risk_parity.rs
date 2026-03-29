@@ -3,7 +3,7 @@
 //! Equalizes the risk contribution of each asset in a portfolio.
 //! High volatility assets receive lower weights, low volatility assets receive higher weights.
 
-use soroban_sdk::{contracttype, symbol_short, Address, Env, Vec, Map, Symbol};
+use soroban_sdk::{contracttype, Address, Env, Vec, Symbol};
 
 use crate::risk;
 use crate::portfolio;
