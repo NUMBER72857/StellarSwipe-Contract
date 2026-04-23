@@ -1,5 +1,7 @@
 use soroban_sdk::{symbol_short, Address, Env};
 
+use crate::staleness::OracleStatus;
+
 pub fn emit_oracle_removed(env: &Env, oracle: Address, reason: &str) {
     env.events().publish(
         (symbol_short!("oracle"), symbol_short!("removed")),
@@ -38,5 +40,17 @@ pub fn emit_consensus_reached(env: &Env, price: i128, num_oracles: u32) {
     env.events().publish(
         (symbol_short!("consensus"), symbol_short!("reached")),
         (price, num_oracles),
+    );
+}
+
+pub fn emit_oracle_heartbeat_missed(
+    env: &Env,
+    status: OracleStatus,
+    last_update_ledger: u32,
+    ledgers_since_update: u32,
+) {
+    env.events().publish(
+        (symbol_short!("oracle"), symbol_short!("hb_missed")),
+        (status, last_update_ledger, ledgers_since_update),
     );
 }
